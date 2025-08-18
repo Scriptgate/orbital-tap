@@ -55,14 +55,14 @@ public class Orbs {
             shapeRenderer.circle(
                 Gdx.graphics.getWidth() / 2f + orb.x,
                 Gdx.graphics.getHeight() / 2f + orb.y,
-                orb.radius);
+                orb.radius * Gdx.graphics.getWidth());
             shapeRenderer.end();
             shapeRenderer.setColor(Color.WHITE);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
             shapeRenderer.circle(
                 Gdx.graphics.getWidth() / 2f + orb.x,
                 Gdx.graphics.getHeight() / 2f + orb.y,
-                orb.radius);
+                orb.radius * Gdx.graphics.getWidth());
             shapeRenderer.end();
         }
     }

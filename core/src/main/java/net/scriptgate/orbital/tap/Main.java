@@ -4,6 +4,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -14,6 +15,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
  * {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms.
  */
 public class Main extends ApplicationAdapter {
+
+    OrthographicCamera camera;
     private HUD hud;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch batch;
@@ -23,6 +26,7 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void create() {
+        camera = new OrthographicCamera();
         orbs = new Orbs();
         score = new Score();
 
@@ -32,7 +36,7 @@ public class Main extends ApplicationAdapter {
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("font/VCR_OSD_MONO_1.001.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 20;
+        parameter.size = (int) (Gdx.graphics.getHeight() * 0.02f);
         parameter.borderWidth = 1;
         parameter.color = Color.WHITE;
         parameter.shadowOffsetX = 1;
@@ -49,7 +53,9 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void resize(int width, int height) {
-
+        camera.setToOrtho(false, width, height);
+        batch.setProjectionMatrix(camera.combined);
+        shapeRenderer.setProjectionMatrix(camera.combined);
     }
 
     @Override
@@ -63,5 +69,6 @@ public class Main extends ApplicationAdapter {
     @Override
     public void dispose() {
         shapeRenderer.dispose();
+        batch.dispose();
     }
 }

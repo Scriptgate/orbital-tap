@@ -30,8 +30,8 @@ public class HUDInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if(hud.slow.contains(screenX, screenY)) {
-            if(score.value() >= score.slowCost()) {
+        if (hud.slow.contains(screenX, screenY)) {
+            if (score.value() >= score.slowCost() && !orbs.isSlowed()) {
                 orbs.slow();
                 score.decrease(score.slowCost());
             }
