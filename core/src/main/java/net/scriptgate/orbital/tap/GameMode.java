@@ -1,9 +1,13 @@
 package net.scriptgate.orbital.tap;
 
-public enum GameMode {
+public class GameMode {
 
-    START_SCREEN,
-    GAME,
-    CREDITS
+    enum State {
+        START_SCREEN,
+        GAME,
+        CREDITS
+    }
+
+    State state = State.START_SCREEN;
 
 }

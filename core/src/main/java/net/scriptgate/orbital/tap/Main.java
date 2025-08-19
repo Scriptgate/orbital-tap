@@ -16,7 +16,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
  */
 public class Main extends ApplicationAdapter {
 
-    OrthographicCamera camera;
+    private OrthographicCamera camera;
+    private GameMode gameMode;
     private HUD hud;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch batch;
@@ -27,10 +28,11 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         camera = new OrthographicCamera();
-        orbs = new Orbs();
+        this.gameMode = new GameMode();
+        orbs = new Orbs(gameMode);
         score = new Score();
 
-        hud = new HUD(orbs, score);
+        hud = new HUD(gameMode, orbs, score);
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
 
@@ -46,8 +48,8 @@ public class Main extends ApplicationAdapter {
         generator.dispose();
 
         InputMultiplexer multiplexer = new InputMultiplexer();
-        multiplexer.addProcessor(new HUDInputProcessor(hud, orbs, score));
-        multiplexer.addProcessor(new OrbInputProcessor(orbs, score));
+        multiplexer.addProcessor(new HUDInputProcessor(gameMode, hud, orbs, score));
+        multiplexer.addProcessor(new OrbInputProcessor(gameMode, orbs, score));
         Gdx.input.setInputProcessor(multiplexer);
     }
 
@@ -62,7 +64,7 @@ public class Main extends ApplicationAdapter {
     public void render() {
         orbs.update();
         ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
-        orbs.render(shapeRenderer, batch, font);
+        orbs.render(shapeRenderer);
         hud.render(shapeRenderer, batch, font);
     }
 

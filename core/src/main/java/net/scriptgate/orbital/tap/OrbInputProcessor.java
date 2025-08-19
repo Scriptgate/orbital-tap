@@ -5,10 +5,12 @@ import com.badlogic.gdx.InputProcessor;
 import java.util.Optional;
 
 public class OrbInputProcessor implements InputProcessor {
+    private final GameMode gameMode;
     private final Orbs orbs;
     private final Score score;
 
-    public OrbInputProcessor(Orbs orbs, Score score) {
+    public OrbInputProcessor(GameMode gameMode, Orbs orbs, Score score) {
+        this.gameMode = gameMode;
         this.orbs = orbs;
         this.score = score;
     }
@@ -30,6 +32,9 @@ public class OrbInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if(gameMode.state != GameMode.State.GAME) {
+            return false;
+        }
         Optional<Orb> orbClicked = orbs.stream().filter(orb -> orb.contains(screenX, screenY)).findFirst();
         if(orbClicked.isPresent()) {
             orbs.remove(orbClicked.get());
@@ -37,6 +42,9 @@ public class OrbInputProcessor implements InputProcessor {
                 score.increase(1);
             } else {
                 score.increase(2);
+            }
+            if(orbs.isEmpty()) {
+                gameMode.state = GameMode.State.CREDITS;
             }
         } else {
             orbs.spawn();

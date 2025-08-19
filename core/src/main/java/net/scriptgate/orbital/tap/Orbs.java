@@ -16,12 +16,19 @@ public class Orbs {
     private static final float SPEED_DEFAULT = 1;
     private static final float SPEED_SLOW = 0.1f;
 
+    private final GameMode gameMode;
+
     private final List<Orb> orbs;
     private float speedModifier = SPEED_DEFAULT;
     private float slowTimeRemaining = 0;
 
-    public Orbs() {
+    public Orbs(GameMode gameMode) {
+        this.gameMode = gameMode;
         orbs = new ArrayList<>();
+        spawnAll();
+    }
+
+    public void spawnAll() {
         for (int i = 0; i < 100; i++) {
             spawn();
         }
@@ -48,7 +55,10 @@ public class Orbs {
         }
     }
 
-    public void render(ShapeRenderer shapeRenderer, SpriteBatch batch, BitmapFont font) {
+    public void render(ShapeRenderer shapeRenderer) {
+        if(gameMode.state != GameMode.State.GAME) {
+            return;
+        }
         for (Orb orb : orbs) {
             shapeRenderer.setColor(orb.color);
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -86,5 +96,9 @@ public class Orbs {
 
     public boolean isSlowed() {
         return slowTimeRemaining > 0;
+    }
+
+    public boolean isEmpty() {
+        return orbs.isEmpty();
     }
 }

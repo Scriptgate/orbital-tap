@@ -3,11 +3,13 @@ package net.scriptgate.orbital.tap;
 import com.badlogic.gdx.InputProcessor;
 
 public class HUDInputProcessor implements InputProcessor {
+    private final GameMode gameMode;
     private final HUD hud;
     private final Orbs orbs;
     private final Score score;
 
-    public HUDInputProcessor(HUD hud, Orbs orbs, Score score) {
+    public HUDInputProcessor(GameMode gameMode, HUD hud, Orbs orbs, Score score) {
+        this.gameMode = gameMode;
         this.hud = hud;
         this.orbs = orbs;
         this.score = score;
@@ -30,7 +32,17 @@ public class HUDInputProcessor implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (hud.slow.contains(screenX, screenY)) {
+        if(gameMode.state == GameMode.State.START_SCREEN && hud.start.contains(screenX, screenY)) {
+            gameMode.state = GameMode.State.GAME;
+            return true;
+        }
+        if(gameMode.state == GameMode.State.CREDITS && hud.restart.contains(screenX, screenY)) {
+            gameMode.state = GameMode.State.GAME;
+            score.reset();
+            orbs.spawnAll();
+            return true;
+        }
+        if (gameMode.state == GameMode.State.GAME && hud.slow.contains(screenX, screenY)) {
             if (score.value() >= score.slowCost() && !orbs.isSlowed()) {
                 orbs.slow();
                 score.decrease(score.slowCost());
@@ -57,6 +69,8 @@ public class HUDInputProcessor implements InputProcessor {
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
+        hud.start.hover = hud.start.contains(screenX, screenY);
+        hud.restart.hover = hud.restart.contains(screenX, screenY);
         hud.slow.hover = hud.slow.contains(screenX, screenY);
         return false;
     }

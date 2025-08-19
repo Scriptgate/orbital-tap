@@ -19,4 +19,8 @@ public class Score {
     public int slowCost() {
         return 15;
     }
+
+    public void reset() {
+        score = 0;
+    }
 }
