@@ -145,7 +145,7 @@ tasks.register('packageZip', Zip) {
   group('build')
   dependsOn tasks.named('package')
   zip64 = true
-  from layout.buildDirectory.dir('orbital-tap-packed')
+  from layout.buildDirectory.dir('package/orbital-tap-packed')
   destinationDirectory.set(layout.buildDirectory.dir('package'))
   archiveFileName.set('orbital-tap.zip')
 }
