@@ -3,8 +3,12 @@ package net.scriptgate.orbital.tap;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver;
+import com.badlogic.gdx.assets.loaders.resolvers.ResolutionFileResolver.Resolution;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -16,23 +20,30 @@ import com.badlogic.gdx.utils.ScreenUtils;
  */
 public class Main extends ApplicationAdapter {
 
+    private ResolutionFileResolver fileResolver;
     private OrthographicCamera camera;
     private GameMode gameMode;
     private HUD hud;
     private ShapeRenderer shapeRenderer;
     private SpriteBatch batch;
     private BitmapFont font;
+    private Texture texture;
     private Orbs orbs;
     private Score score;
 
     @Override
     public void create() {
+        fileResolver = new ResolutionFileResolver(new InternalFileHandleResolver(),
+            new Resolution(800, 480, "480"),
+            new Resolution(1280, 720, "720"),
+            new Resolution(1920, 1080, "1080"));
+        texture = new Texture(fileResolver.resolve("data/orbital-tap.png"));
         camera = new OrthographicCamera();
         this.gameMode = new GameMode();
         orbs = new Orbs(gameMode);
         score = new Score();
 
-        hud = new HUD(gameMode, orbs, score);
+        hud = new HUD(gameMode, texture, orbs, score);
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
 
@@ -63,7 +74,7 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         orbs.update();
-        ScreenUtils.clear(0.15f, 0.15f, 0.2f, 1f);
+        ScreenUtils.clear(0f, 0f, 0f, 1f);
         orbs.render(shapeRenderer);
         hud.render(shapeRenderer, batch, font);
     }

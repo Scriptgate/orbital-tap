@@ -2,6 +2,7 @@ package net.scriptgate.orbital.tap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -15,11 +16,13 @@ public class HUD {
     public Button restart = new Button(0.4f, 0.05f, 0.1f, 0.2f);
 
     private final GameMode gameMode;
+    private final Texture texture;
     private final Orbs orbs;
     private final Score score;
 
-    public HUD(GameMode gameMode, Orbs orbs, Score score) {
+    public HUD(GameMode gameMode, Texture texture, Orbs orbs, Score score) {
         this.gameMode = gameMode;
+        this.texture = texture;
         this.orbs = orbs;
         this.score = score;
     }
@@ -39,14 +42,18 @@ public class HUD {
                 batch.setColor(Color.WHITE);
                 batch.begin();
                 font.getData().setScale(1);
-                font.draw(batch, "Start",
+                font.draw(batch, "START",
                     start.getX(),
-                    start.getY() + start.getHeight() / 1.5f,
+                    start.getY() + (start.getHeight() / 1.7f),
                     start.getWidth(),
                     Align.center, false);
-                font.getData().setScale(3);
-                font.draw(batch, "Orbital Tap", 0, 0.95f * Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), Align.center, false);
                 batch.end();
+
+                batch.begin();
+
+                batch.draw(texture, (Gdx.graphics.getWidth() - texture.getWidth()) / 2f, 0.9f*Gdx.graphics.getHeight() - texture.getHeight());
+                batch.end();
+
                 break;
             case GAME:
                 if (slow.hover || orbs.isSlowed()) {
@@ -85,12 +92,12 @@ public class HUD {
                 batch.setColor(Color.WHITE);
                 batch.begin();
                 font.getData().setScale(1);
-                font.draw(batch, "Restart",
+                font.draw(batch, "RESTART",
                     restart.getX(),
-                    restart.getY() + restart.getHeight() / 1.5f,
+                    restart.getY() + restart.getHeight() / 1.7f,
                     restart.getWidth(),
                     Align.center, false);
-                font.draw(batch, "Winner! Winner! Orbital Dinner!", 0, 0.25f * Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), Align.center, false);
+                font.draw(batch, "WINNER! WINNER! ORBITAL DINNER!", 0, 0.25f * Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), Align.center, false);
                 font.getData().setScale(3);
                 font.draw(batch, "Score: " + score.value(), 0, 0.95f * Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), Align.center, false);
                 batch.end();
