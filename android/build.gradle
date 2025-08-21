@@ -130,3 +130,13 @@ tasks.register('run', Exec) {
 }
 
 eclipse.project.name = appName + "-android"
+
+publishing {
+  publications {
+    apk(MavenPublication) {
+      artifact(layout.buildDirectory.file('outputs/apk/release/android-release-unsigned.apk')) {
+        builtBy tasks.named('assemble')
+      }
+    }
+  }
+}

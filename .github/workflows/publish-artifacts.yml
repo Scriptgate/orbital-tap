@@ -1,0 +1,33 @@
+---
+name: Publish Artifacts
+
+env:
+  JAVA_VERSION: 8
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish-artifacts:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CHECKOUT_PAT }}
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{  env.JAVA_VERSION }}
+          distribution: 'temurin'
+      - name: Set up Gradle
+        run: chmod a+x gradlew
+      - name: Build
+        run: ./gradlew build
+      - name: Publish
+        run: ./gradlew publish
+        env:
+          GITHUB_USERNAME: scriptgate
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

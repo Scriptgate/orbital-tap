@@ -2,20 +2,26 @@
 buildscript {
   repositories {
     gradlePluginPortal()
+    maven {
+      url = "https://artifactory.nimblygames.com/artifactory/ng-public-release/"
+    }
   }
   dependencies {
+    classpath "com.badlogicgames.packr:packr:3.0.3"
     classpath "io.github.fourlastor:construo:1.7.1"
     if(enableGraalNative == 'true') {
       classpath "org.graalvm.buildtools.native:org.graalvm.buildtools.native.gradle.plugin:0.9.28"
     }
   }
 }
+
 plugins {
   id "application"
 }
 apply plugin: 'io.github.fourlastor.construo'
 
-
+import com.badlogicgames.packr.PackrConfig
+import com.badlogicgames.packr.Packr
 import io.github.fourlastor.construo.Target
 
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
@@ -111,6 +117,46 @@ tasks.register("jarWin") {
   dependencies {
     jar.exclude("macos/arm64/**", "macos/x64/**", "linux/arm32/**", "linux/arm64/**", "linux/x64/**",
       'META-INF/INDEX.LIST', 'META-INF/maven/**')
+  }
+}
+
+tasks.register('package') {
+  group('build')
+  dependsOn assemble
+  outputs.dir('build/package')
+  doLast {
+    PackrConfig config = new PackrConfig()
+    config.platform = PackrConfig.Platform.Windows64
+    config.jdk = "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.15%2B6/OpenJDK17U-jdk_x64_windows_hotspot_17.0.15_6.zip"
+    config.executable = 'orbital-tap'
+    config.classpath = [layout.buildDirectory.file('libs/orbital-tap-1.0.0.jar').get().asFile.absolutePath]
+    config.removePlatformLibs = config.classpath
+    config.mainClass = 'net.scriptgate.orbital.tap.lwjgl3.Lwjgl3Launcher'
+    config.vmArgs = ['-Xmx1G']
+    config.minimizeJre = 'soft'
+    config.outDir = layout.buildDirectory.dir('package/orbital-tap-packed').get().asFile
+    config.useZgcIfSupportedOs = true
+
+    new Packr().pack(config)
+  }
+}
+
+tasks.register('packageZip', Zip) {
+  group('build')
+  dependsOn tasks.named('package')
+  zip64 = true
+  from layout.buildDirectory.dir('orbital-tap-packed')
+  destinationDirectory.set(layout.buildDirectory.dir('package'))
+  archiveFileName.set('orbital-tap.zip')
+}
+
+publishing {
+  publications {
+    zip(MavenPublication) {
+      artifact(layout.buildDirectory.file('package/orbital-tap.zip')) {
+        builtBy 'packageZip'
+      }
+    }
   }
 }
 
