@@ -154,7 +154,7 @@ publishing {
   publications {
     zip(MavenPublication) {
       artifact(layout.buildDirectory.file('package/orbital-tap.zip')) {
-        builtBy 'packageZip'
+        builtBy tasks.named('packageZip')
       }
     }
   }
