@@ -28,8 +28,22 @@ jobs:
         run: chmod a+x gradlew
       - name: Build
         run: ./gradlew build
+      - uses: r0adkll/sign-android-release@v1
+        name: Sign app APK
+        # ID used to access action output
+        id: sign_app
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
+          alias: ${{ secrets.SIGNING_ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+        env:
+          # override default build-tools version (33.0.0) -- optional
+          BUILD_TOOLS_VERSION: "34.0.0"
       - name: Publish
         run: ./gradlew publish
         env:
           GITHUB_USERNAME: scriptgate
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SIGNED_RELEASE_FILE: ${{steps.sign_app.outputs.signedReleaseFile}}

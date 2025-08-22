@@ -10,7 +10,7 @@ apply plugin: 'com.android.application'
 
 android {
   namespace "net.scriptgate.orbital.tap"
-  compileSdk 35
+  compileSdk 36
   sourceSets {
     main {
       manifest.srcFile 'AndroidManifest.xml'
@@ -33,7 +33,7 @@ android {
   defaultConfig {
     applicationId 'net.scriptgate.orbital.tap'
     minSdkVersion 23
-    targetSdkVersion 35
+    targetSdkVersion 36
     versionCode 1
     versionName "1.0"
   }
@@ -131,11 +131,13 @@ tasks.register('run', Exec) {
 
 eclipse.project.name = appName + "-android"
 
-publishing {
-  publications {
-    apk(MavenPublication) {
-      artifact(layout.buildDirectory.file('outputs/apk/release/android-release-unsigned.apk')) {
-        builtBy tasks.named('assemble')
+def signedRelease = project.providers.environmentVariable('SIGNED_RELEASE_FILE')
+
+if(signedRelease.isPresent()) {
+  publishing {
+    publications {
+      apk(MavenPublication) {
+        artifact(signedRelease.get())
       }
     }
   }
