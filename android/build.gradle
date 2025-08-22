@@ -137,7 +137,7 @@ if(signedRelease.isPresent()) {
   publishing {
     publications {
       apk(MavenPublication) {
-        artifact(signedRelease.get())
+        artifact(rootProject.file(signedRelease.get()))
       }
     }
   }
