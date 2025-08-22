@@ -46,4 +46,4 @@ jobs:
         env:
           GITHUB_USERNAME: scriptgate
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SIGNED_RELEASE_FILE: ${{steps.sign_app.outputs.signedReleaseFile}}
+          SIGNED_RELEASE_FILE: 'android/build/outputs/apk/release/android-release-unsigned-signed.apk'
